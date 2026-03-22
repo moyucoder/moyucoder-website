@@ -1,0 +1,183 @@
+---
+import Icon from "../../node_modules/@astrojs/starlight/user-components/Icon.astro"
+
+const t = Astro.locals.t
+const groupLabel = t("themeSelect.accessibleLabel")
+const lightLabel = t("themeSelect.light")
+const darkLabel = t("themeSelect.dark")
+const autoLabel = t("themeSelect.auto")
+---
+
+<starlight-theme-segmented class="theme-segmented" role="group" aria-label={groupLabel}>
+  <button
+    type="button"
+    class="theme-segmented__btn"
+    data-theme-value="light"
+    aria-pressed="false"
+    aria-label={lightLabel}
+    title={lightLabel}
+  >
+    <Icon name="sun" size="1.125rem" />
+  </button>
+  <button
+    type="button"
+    class="theme-segmented__btn"
+    data-theme-value="dark"
+    aria-pressed="false"
+    aria-label={darkLabel}
+    title={darkLabel}
+  >
+    <Icon name="moon" size="1.125rem" />
+  </button>
+  <button
+    type="button"
+    class="theme-segmented__btn"
+    data-theme-value="auto"
+    aria-pressed="false"
+    aria-label={autoLabel}
+    title={autoLabel}
+  >
+    <Icon name="laptop" size="1.125rem" />
+  </button>
+</starlight-theme-segmented>
+
+<script>
+  declare global {
+    interface Window {
+      StarlightThemeProvider: {
+        updatePickers: (theme?: unknown) => void
+      }
+    }
+  }
+
+  type Theme = "auto" | "dark" | "light"
+
+  const storageKey = "starlight-theme"
+
+  const parseTheme = (theme: unknown): Theme =>
+    theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto"
+
+  const loadTheme = (): Theme =>
+    parseTheme(typeof localStorage !== "undefined" && localStorage.getItem(storageKey))
+
+  function storeTheme(theme: Theme): void {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(storageKey, theme === "light" || theme === "dark" ? theme : "")
+    }
+  }
+
+  const getPreferredColorScheme = (): Theme =>
+    matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"
+
+  function syncAllSegmented(pref: Theme): void {
+    document.querySelectorAll("starlight-theme-segmented").forEach((root) => {
+      root.querySelectorAll("button[data-theme-value]").forEach((btn) => {
+        const v = btn.getAttribute("data-theme-value") as Theme | null
+        const active = v === pref
+        btn.classList.toggle("is-active", active)
+        btn.setAttribute("aria-pressed", active ? "true" : "false")
+      })
+    })
+  }
+
+  let patchApplied = false
+  function ensurePickerPatch(): void {
+    if (patchApplied) return
+    const stp = window.StarlightThemeProvider
+    if (!stp?.updatePickers) return
+    patchApplied = true
+    const orig = stp.updatePickers.bind(stp)
+    stp.updatePickers = (theme?: unknown) => {
+      orig(theme)
+      const pref =
+        theme === undefined || theme === null ? loadTheme() : parseTheme(theme)
+      syncAllSegmented(pref)
+    }
+  }
+
+  function onThemeChange(theme: Theme): void {
+    window.StarlightThemeProvider.updatePickers(theme)
+    document.documentElement.dataset.theme = theme === "auto" ? getPreferredColorScheme() : theme
+    storeTheme(theme)
+  }
+
+  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
+    if (loadTheme() === "auto") onThemeChange("auto")
+  })
+
+  class StarlightThemeSegmented extends HTMLElement {
+    connectedCallback(): void {
+      ensurePickerPatch()
+      this.querySelectorAll("button[data-theme-value]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const v = btn.getAttribute("data-theme-value")
+          onThemeChange(parseTheme(v))
+        })
+      })
+      onThemeChange(loadTheme())
+    }
+  }
+
+  customElements.define("starlight-theme-segmented", StarlightThemeSegmented)
+</script>
+
+<style>
+  @layer starlight.core {
+    .theme-segmented {
+      display: inline-flex;
+      align-items: stretch;
+      gap: 0;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      border: 1px solid var(--sl-color-hairline-light);
+    }
+
+    .theme-segmented__btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0.4rem 0.55rem;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: var(--sl-color-gray-2);
+      cursor: pointer;
+      line-height: 1;
+      transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+    }
+
+    .theme-segmented__btn + .theme-segmented__btn {
+      border-inline-start: 1px solid var(--sl-color-hairline-light);
+    }
+
+    .theme-segmented__btn:hover:not(.is-active) {
+      color: var(--sl-color-gray-1);
+      background: transparent;
+    }
+
+    .theme-segmented__btn.is-active {
+      color: var(--sl-color-accent-high);
+      background: transparent;
+      box-shadow: none;
+    }
+
+    :global(:root[data-theme="light"]) .theme-segmented__btn.is-active {
+      color: var(--sl-color-accent);
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .theme-segmented__btn:focus-visible {
+      outline: 2px solid var(--sl-color-accent);
+      outline-offset: 2px;
+    }
+
+    .theme-segmented__btn :global(svg) {
+      display: block;
+    }
+  }
+</style>

@@ -1,0 +1,77 @@
+---
+import "virtual:starlight/user-css"
+import "../../node_modules/@astrojs/starlight/style/layers.css"
+import "../../node_modules/@astrojs/starlight/style/props.css"
+import "../../node_modules/@astrojs/starlight/style/reset.css"
+import "../../node_modules/@astrojs/starlight/style/util.css"
+import "virtual:starlight/optional-css"
+import printHref from "../../node_modules/@astrojs/starlight/style/print.css?url&no-inline"
+
+import ThemeProvider from "virtual:starlight/components/ThemeProvider"
+import SkipLink from "virtual:starlight/components/SkipLink"
+import StarlightHeader from "../components/StarlightHeader.astro"
+import siteConfig from "../../config.mjs"
+import "../styles/home.css"
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const { title = "摸鱼编程", description = "摸鱼编程" } = Astro.props
+---
+
+<!doctype html>
+<html lang="zh-CN" dir="ltr" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, siteConfig.url).href} />
+    <title>{title}</title>
+    <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL}logo.png`} />
+    <ThemeProvider />
+    <link rel="stylesheet" href={printHref} media="print" />
+  </head>
+  <body>
+    <SkipLink />
+    <div class="page home-root">
+      <header class="header">
+        <StarlightHeader />
+      </header>
+      <div class="main-frame home-main-frame">
+        <slot />
+        <footer class="home-site-footer">
+          <div class="home-site-footer-inner">
+            <p class="home-footer-years">2011~2026</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  .home-root.page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-root .header {
+    z-index: var(--sl-z-index-navbar);
+    position: fixed;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+    width: 100%;
+    height: var(--sl-nav-height);
+    border-bottom: 1px solid var(--sl-color-hairline-shade);
+    padding: var(--sl-nav-pad-y) var(--sl-nav-pad-x);
+    background-color: var(--sl-color-bg-nav);
+    box-sizing: border-box;
+  }
+
+  .home-root .main-frame {
+    padding-inline-start: 0;
+  }
+</style>

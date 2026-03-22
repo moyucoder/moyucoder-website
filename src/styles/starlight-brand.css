@@ -1,0 +1,29 @@
+/* Logo 主色 #1a9fb7 — 对齐 Starlight 语义色，文档/侧栏/正文链接统一 */
+:root,
+::backdrop {
+  --moyu-brand: #1a9fb7;
+  --sl-color-accent-low: color-mix(in oklab, var(--moyu-brand) 32%, hsl(195 45% 8%));
+  --sl-color-accent: var(--moyu-brand);
+  --sl-color-accent-high: color-mix(in oklab, var(--moyu-brand) 58%, white);
+}
+
+:root[data-theme="light"],
+[data-theme="light"] ::backdrop {
+  --sl-color-accent-low: color-mix(in oklab, var(--moyu-brand) 14%, white);
+  --sl-color-accent: color-mix(in oklab, var(--moyu-brand) 92%, black 8%);
+  --sl-color-accent-high: color-mix(in oklab, var(--moyu-brand) 42%, black);
+}
+
+/* 浅色：顶栏与主内容区同一底（默认 Starlight nav 为 gray-7，正文为 --sl-color-bg） */
+:root[data-theme="light"] .page > .header {
+  background-color: var(--sl-color-bg);
+}
+
+/* 正文链接悬停：保留色相，略提亮/压深 */
+.sl-markdown-content a:hover:not(:where(.not-content *)) {
+  color: color-mix(in oklab, var(--sl-color-text-accent) 78%, white);
+}
+
+:root[data-theme="light"] .sl-markdown-content a:hover:not(:where(.not-content *)) {
+  color: color-mix(in oklab, var(--sl-color-accent) 72%, black);
+}

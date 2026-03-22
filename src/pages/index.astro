@@ -1,0 +1,99 @@
+---
+import { Image } from "astro:assets"
+import { getCollection, type CollectionEntry } from "astro:content"
+import HomeLayout from "../layouts/HomeLayout.astro"
+import { resolveFeedVisual, type FeedColumn, type FeedVisual } from "../lib/feedCover.ts"
+import { formatDate, hrefForDocId, isoDate, mtimeMs, weeklyIssueNum } from "../lib/homeLists.ts"
+
+const allDocs = await getCollection("docs", (e) => e.data.draft !== true)
+
+type CardItem = {
+  href: string
+  title: string
+  dateLabel: string
+  dateIso: string
+  description: string
+  feed: FeedVisual
+}
+
+function toCardItems(entries: CollectionEntry<"docs">[], column: FeedColumn): CardItem[] {
+  return entries.slice(0, 12).map((e) => {
+    const t = mtimeMs(e.id)
+    return {
+      href: hrefForDocId(e.id),
+      title: e.data.title,
+      dateLabel: formatDate(t),
+      dateIso: isoDate(t),
+      description: (e.data.description ?? "") as string,
+      feed: resolveFeedVisual(e.data.feedCover, column),
+    }
+  })
+}
+
+const weeklyRaw = allDocs.filter((e) => e.id.startsWith("weekly/") && /^weekly\/weekly-\d+$/u.test(e.id))
+weeklyRaw.sort((a, b) => weeklyIssueNum(b.id) - weeklyIssueNum(a.id))
+const weeklyList = toCardItems(weeklyRaw, "weekly")
+
+const blogRaw = allDocs.filter((e) => e.id.startsWith("blog/") && e.id !== "blog/index")
+blogRaw.sort((a, b) => mtimeMs(b.id) - mtimeMs(a.id))
+const blogList = toCardItems(blogRaw, "blog")
+
+const base = import.meta.env.BASE_URL
+const feedColumns = [
+  { key: "weekly", title: "周刊", moreHref: `${base}weekly/`, items: weeklyList },
+  { key: "blog", title: "博客", moreHref: `${base}blog/`, items: blogList },
+] as const
+---
+
+<HomeLayout title="摸鱼编程" description="摸鱼编程 — 周刊与博客">
+  <main id="_top" class="home-main-inner">
+    <div class="home-columns">
+      {
+        feedColumns.map((col) => (
+          <section class="home-col" aria-labelledby={`home-${col.key}-heading`}>
+            <h2 id={`home-${col.key}-heading`} class="home-col-title">
+              {col.title}
+            </h2>
+            <div class="home-card-grid">
+              {col.items.map((item) => (
+                <a class="home-card" href={item.href}>
+                  <div
+                    class:list={["home-card-image", item.feed.kind === "none" && "home-card-image--empty"]}
+                    aria-hidden={item.feed.kind === "none" ? true : undefined}
+                  >
+                    {item.feed.kind === "none" ? null : item.feed.kind === "raster" ? (
+                      <Image src={item.feed.src} alt="" width={640} height={360} />
+                    ) : (
+                      <img
+                        src={item.feed.src}
+                        alt=""
+                        width="640"
+                        height="360"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
+                  </div>
+                  <div class="home-card-body">
+                    <h3 class="home-card-title">{item.title}</h3>
+                    {item.dateLabel && item.dateIso && (
+                      <time class="home-card-date" datetime={item.dateIso}>
+                        {item.dateLabel}
+                      </time>
+                    )}
+                    {item.description && <p class="home-card-desc">{item.description}</p>}
+                  </div>
+                </a>
+              ))}
+            </div>
+            <div class="home-more-wrap">
+              <a class="home-more" href={col.moreHref}>
+                查看更多
+              </a>
+            </div>
+          </section>
+        ))
+      }
+    </div>
+  </main>
+</HomeLayout>

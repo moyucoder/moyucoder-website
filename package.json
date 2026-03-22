@@ -1,0 +1,28 @@
+{
+  "name": "moyucoder-website",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "postinstall": "patch-package",
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build && node scripts/pagefind-all.mjs",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "6.3.1",
+    "@astrojs/starlight": "0.34.3",
+    "astro": "5.7.13",
+    "rehype-autolink-headings": "7.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.13.9",
+    "patch-package": "^8.0.1",
+    "typescript": "5.8.2"
+  }
+}

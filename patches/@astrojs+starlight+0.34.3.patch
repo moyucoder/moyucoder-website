@@ -1,0 +1,83 @@
+diff --git a/node_modules/@astrojs/starlight/utils/navigation.ts b/node_modules/@astrojs/starlight/utils/navigation.ts
+index 2870d61..f9e2da9 100644
+--- a/node_modules/@astrojs/starlight/utils/navigation.ts
++++ b/node_modules/@astrojs/starlight/utils/navigation.ts
+@@ -356,14 +356,57 @@ function sidebarFromDir(
+  *
+  * @see getSidebarFromIntermediateSidebar
+  */
+-const intermediateSidebars = new Map<string | undefined, SidebarEntry[]>();
++const intermediateSidebars = new Map<string, SidebarEntry[]>();
++
++/** moyu: 单语言站点用路径区分周刊侧栏；避免 locale 均为 undefined 时缓存串台。兼容 Astro `base`（如 GitHub Pages 项目站 /repo/weekly/） */
++function sidebarGroupKey(pathname: string): string {
++	const p = pathname.replace(/\/$/, '') || '/';
++	if (p.endsWith('/weekly') || p.includes('/weekly/')) return '__weekly';
++	return '__default';
++}
++
++function getEffectiveSidebar(pathname: string): StarlightConfig['sidebar'] {
++	const raw = config as StarlightConfig & {
++		sidebarByLocale?: Record<string, NonNullable<StarlightConfig['sidebar']>>;
++	};
++	const by = raw.sidebarByLocale;
++	const p = pathname.replace(/\/$/, '') || '/';
++	if (by?.weekly && (p.endsWith('/weekly') || p.includes('/weekly/'))) return by.weekly;
++	return config.sidebar;
++}
++
++/** moyu: 周刊侧栏仅配置「单组 + autogenerate」时去掉外层分组壳，直接展示 weekly 目录内层级 */
++function unwrapWeeklySidebarShell(entries: SidebarEntry[]): SidebarEntry[] {
++	if (entries.length !== 1) return entries;
++	const only = entries[0];
++	if (only.type !== 'group') return entries;
++	return only.entries;
++}
+ 
+ /** Get the sidebar for the current page using the global config. */
+ export function getSidebar(pathname: string, locale: string | undefined): SidebarEntry[] {
+-	let intermediateSidebar = intermediateSidebars.get(locale);
+-	if (!intermediateSidebar) {
+-		intermediateSidebar = getIntermediateSidebarFromConfig(config.sidebar, pathname, locale);
+-		intermediateSidebars.set(locale, intermediateSidebar);
++	const key = sidebarGroupKey(pathname);
++	let intermediateSidebar: SidebarEntry[] | undefined;
++	/** 开发模式下禁用侧栏缓存，避免增删 md 后仍沿用旧 slug（手动 items 会抛错、自动目录会显示已删链接）。 */
++	if (import.meta.env.DEV) {
++		intermediateSidebar = getIntermediateSidebarFromConfig(
++			getEffectiveSidebar(pathname),
++			pathname,
++			locale
++		);
++	} else {
++		intermediateSidebar = intermediateSidebars.get(key);
++		if (!intermediateSidebar) {
++			intermediateSidebar = getIntermediateSidebarFromConfig(
++				getEffectiveSidebar(pathname),
++				pathname,
++				locale
++			);
++			intermediateSidebars.set(key, intermediateSidebar);
++		}
++	}
++	if (key === '__weekly') {
++		intermediateSidebar = unwrapWeeklySidebarShell(intermediateSidebar);
+ 	}
+ 	return getSidebarFromIntermediateSidebar(intermediateSidebar, pathname);
+ }
+diff --git a/node_modules/@astrojs/starlight/utils/user-config.ts b/node_modules/@astrojs/starlight/utils/user-config.ts
+index 5695551..3d45e6a 100644
+--- a/node_modules/@astrojs/starlight/utils/user-config.ts
++++ b/node_modules/@astrojs/starlight/utils/user-config.ts
+@@ -129,6 +129,11 @@ const UserConfigSchema = z.object({
+ 	/** Configure your site’s sidebar navigation items. */
+ 	sidebar: SidebarItemSchema.array().optional(),
+ 
++	/** When set for a locale key, replaces the global \`sidebar\` for that locale only. */
++	sidebarByLocale: z
++		.record(z.string(), SidebarItemSchema.array())
++		.optional(),
++
+ 	/**
+ 	 * Add extra tags to your site’s `<head>`.
+ 	 *

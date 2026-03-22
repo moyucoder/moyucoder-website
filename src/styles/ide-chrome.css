@@ -1,0 +1,317 @@
+/* 全站 IDE / 编辑器风格：面板底色、分割线、等宽导航与侧栏 */
+:root,
+::backdrop {
+  /* 以线分割为主，不用浮层阴影 */
+  --sl-shadow-sm: none;
+  --sl-shadow-md: none;
+  --sl-shadow-lg: none;
+}
+
+:root {
+  --ide-font-mono: ui-monospace, "Cascadia Code", "Cascadia Mono", "JetBrains Mono", "PingFang SC",
+    monospace;
+  --ide-font-ui: ui-sans-serif, "PingFang SC", "Noto Sans SC", "Hiragino Sans GB", system-ui,
+    sans-serif;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] ::backdrop {
+  --ide-editor: #1e1e1e;
+  --ide-side: #252526;
+  --ide-titlebar: #2d2d30;
+  --ide-border: #3e3e42;
+  --ide-border-subtle: #2b2b2d;
+  --sl-color-bg: var(--ide-editor);
+  --sl-color-black: var(--ide-editor);
+  /* 与正文同一底，仅靠边框分割 */
+  --sl-color-bg-nav: var(--ide-editor);
+  --sl-color-bg-sidebar: var(--ide-editor);
+  --sl-color-gray-6: var(--ide-side);
+  --sl-color-hairline-shade: var(--ide-border);
+  --sl-color-hairline: var(--ide-border-subtle);
+  --sl-color-hairline-light: var(--ide-border);
+}
+
+html[data-theme="light"],
+html[data-theme="light"] ::backdrop {
+  /* 浅色：纯白面板 + 近黑正文（Starlight 里 --sl-color-black 表示「页面底」实为白，勿用作字色） */
+  --moyu-ink: #141414;
+  --moyu-ink-muted: #333333;
+  --moyu-ink-soft: #444444;
+
+  --ide-editor: #ffffff;
+  --ide-side: #ffffff;
+  --ide-titlebar: #ffffff;
+  --ide-border: #e5e5e5;
+  --ide-border-subtle: #ebebeb;
+
+  --sl-color-bg: #ffffff;
+  --sl-color-black: #ffffff;
+  --sl-color-bg-nav: #ffffff;
+  --sl-color-bg-sidebar: #ffffff;
+  --sl-color-gray-7: #ffffff;
+  --sl-color-gray-6: #f5f5f5;
+  --sl-color-bg-inline-code: #f0f0f0;
+
+  --sl-color-text: var(--moyu-ink);
+  --sl-color-gray-1: var(--moyu-ink);
+  --sl-color-gray-2: var(--moyu-ink-muted);
+  --sl-color-gray-3: var(--moyu-ink-soft);
+  --sl-color-gray-4: #5a5a5a;
+  --sl-color-gray-5: #d0d0d0;
+
+  --sl-color-hairline-shade: var(--ide-border);
+  --sl-color-hairline: var(--ide-border-subtle);
+  --sl-color-hairline-light: var(--ide-border);
+}
+
+html {
+  font-family: var(--ide-font-ui);
+  font-size: 15px;
+}
+
+.sidebar-content,
+#starlight__sidebar .sidebar-content {
+  font-family: var(--ide-font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+}
+
+/* 顶栏：仅底边线 */
+.page > header.header {
+  border-bottom-color: var(--ide-border) !important;
+  box-shadow: none;
+}
+
+@media (min-width: 50rem) {
+  .sidebar-pane {
+    border-inline-end-color: var(--ide-border) !important;
+  }
+}
+
+.sl-markdown-content {
+  font-family: var(--ide-font-ui);
+}
+
+/* 正文插图：最大宽度为版心 60%，居中（博客/周刊 Markdown、MDX） */
+.sl-markdown-content picture {
+  display: block;
+  max-width: 60%;
+  margin-inline: auto;
+}
+.sl-markdown-content img {
+  max-width: 60%;
+  width: auto;
+  height: auto;
+  display: block;
+  margin-inline: auto;
+}
+.sl-markdown-content picture img {
+  max-width: 100%;
+  width: 100%;
+}
+
+/* 全站浅色/暗色底与边框变量（404 等页面可复用） */
+html[data-theme="dark"] {
+  --bg: var(--ide-editor);
+  --bg2: var(--ide-side);
+  --line: var(--ide-border);
+  --text: #cccccc;
+  --text-strong: #e8e8e8;
+  --muted: #858585;
+}
+
+html[data-theme="light"] {
+  --bg: #ffffff;
+  --bg2: #ffffff;
+  --line: var(--ide-border);
+  --text: var(--moyu-ink);
+  --text-strong: var(--moyu-ink);
+  --muted: var(--moyu-ink-muted);
+}
+
+@media (prefers-color-scheme: light) {
+  html:not([data-theme]) {
+    --bg: #ffffff;
+    --bg2: #f3f3f3;
+    --line: #d4d4d4;
+    --text: #333333;
+    --text-strong: #1a1a1a;
+    --muted: #666666;
+  }
+}
+
+/* 滚动条 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--ide-border) 78%, transparent) var(--sl-color-bg);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--ide-border) 80%, transparent);
+  border-radius: 0;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-track {
+  background: color-mix(in oklab, var(--sl-color-bg) 92%, var(--ide-border));
+}
+
+/* 浅色顶栏与主区仍同色（与 starlight-brand 一致） */
+html[data-theme="light"] .page > header.header {
+  background-color: var(--sl-color-bg);
+}
+
+/* 浅色：正文区标题与段落统一近黑字 */
+html[data-theme="light"] body {
+  color: var(--moyu-ink);
+}
+
+html[data-theme="light"] .sl-markdown-content,
+html[data-theme="light"] .sl-markdown-content :where(p, li, td, th, blockquote, dd, dt) {
+  color: var(--moyu-ink);
+}
+
+html[data-theme="light"] .sl-markdown-content :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--moyu-ink);
+}
+
+html[data-theme="light"] .sl-markdown-content :where(strong) {
+  color: var(--moyu-ink);
+}
+
+/* 周刊：## 被 autolink 包成 <a> 时不要链接高亮/下划线（canonical 含 /weekly/） */
+html:has(link[rel="canonical"][href*="/weekly/"]) .sl-markdown-content h2 a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+  background: none;
+  box-shadow: none;
+}
+html:has(link[rel="canonical"][href*="/weekly/"]) .sl-markdown-content h2 a:hover,
+html:has(link[rel="canonical"][href*="/weekly/"]) .sl-markdown-content h2 a:focus,
+html:has(link[rel="canonical"][href*="/weekly/"]) .sl-markdown-content h2 a:focus-visible {
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+
+/* Starlight 侧栏链接、TOC 等 */
+html[data-theme="light"] .sidebar-content a,
+html[data-theme="light"] #starlight__sidebar a {
+  color: var(--moyu-ink-muted);
+}
+
+html[data-theme="light"] .sidebar-content a[aria-current="page"],
+html[data-theme="light"] #starlight__sidebar a[aria-current="page"] {
+  color: var(--moyu-ink);
+}
+
+/* 右侧目录等 */
+html[data-theme="light"] .right-sidebar-panel a {
+  color: var(--moyu-ink-muted);
+}
+
+/* 浅色顶栏：站点标题 */
+html[data-theme="light"] .page > header .site-title {
+  color: var(--moyu-ink);
+}
+
+/* 周刊 / 博客：左侧栏加宽（默认 Starlight 18.75rem） */
+html[data-has-sidebar]:is(
+    :has(link[rel="canonical"][href*="/blog/"]),
+    :has(link[rel="canonical"][href*="/weekly/"])
+  ) {
+  --sl-sidebar-width: 22.5rem;
+}
+
+/* 全站直角、代码块/旁注等与页面同底（无圆角卡片感） */
+.page :where(pre, code, kbd, samp),
+.sl-markdown-content :where(pre, aside, blockquote, table),
+.expressive-code,
+figure.expressive-code {
+  border-radius: 0 !important;
+}
+
+/* 文档顶栏 Starlight 搜索触发器：与全站直角一致；加宽（默认 max-width: 22rem 偏窄） */
+.page > header button[data-open-modal] {
+  border-radius: 0 !important;
+}
+
+@media (min-width: 50rem) {
+  .page > header button[data-open-modal] {
+    max-width: none;
+    width: 100%;
+    min-height: 2.65rem;
+    padding-inline: 0.9rem 0.65rem;
+    font-size: var(--sl-text-base);
+  }
+}
+
+/*
+ * 博客/文档宽屏布局：中栏正文占满 Starlight 分配给 main-pane 的宽度；
+ * 右侧「本页目录」：内容占满 TOC 列，且 TOC 列本身收窄（默认 Starlight 把半幅余量分给右栏，宽屏会空一大块）。
+ * TwoColumnContent / ContentPanel / PageSidebar 见 @astrojs/starlight/components/*.astro
+ */
+@media (min-width: 72rem) {
+  html[data-has-sidebar]:is(
+      :has(link[rel="canonical"][href*="/blog/"]),
+      :has(link[rel="canonical"][href*="/weekly/"])
+    )
+    .content-panel
+    .sl-container {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  html[data-has-sidebar][data-has-toc]:is(
+      :has(link[rel="canonical"][href*="/blog/"]),
+      :has(link[rel="canonical"][href*="/weekly/"])
+    ) {
+    /* 目录列加宽，与左侧加宽侧栏同量级 */
+    --sl-toc-column-width: clamp(14.5rem, 18vw, 21rem);
+  }
+
+  html[data-has-sidebar][data-has-toc]:is(
+      :has(link[rel="canonical"][href*="/blog/"]),
+      :has(link[rel="canonical"][href*="/weekly/"])
+    )
+    .main-pane {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto !important;
+  }
+
+  html[data-has-sidebar][data-has-toc]:is(
+      :has(link[rel="canonical"][href*="/blog/"]),
+      :has(link[rel="canonical"][href*="/weekly/"])
+    )
+    .right-sidebar-container {
+    flex: 0 0 var(--sl-toc-column-width);
+    width: var(--sl-toc-column-width);
+  }
+
+  /* fixed 子层默认 width:100% 相对视口，需与列宽对齐并贴右缘 */
+  html[data-has-sidebar][data-has-toc]:is(
+      :has(link[rel="canonical"][href*="/blog/"]),
+      :has(link[rel="canonical"][href*="/weekly/"])
+    )
+    .right-sidebar {
+    width: var(--sl-toc-column-width) !important;
+    inset-inline-end: 0;
+  }
+
+  html[data-has-sidebar][data-has-toc]:is(
+      :has(link[rel="canonical"][href*="/blog/"]),
+      :has(link[rel="canonical"][href*="/weekly/"])
+    )
+    .right-sidebar-panel
+    .sl-container {
+    width: 100%;
+    max-width: none;
+  }
+}

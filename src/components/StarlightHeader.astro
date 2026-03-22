@@ -1,0 +1,196 @@
+---
+import Search from "virtual:starlight/components/Search"
+import SiteTitle from "virtual:starlight/components/SiteTitle"
+import SocialIcons from "virtual:starlight/components/SocialIcons"
+import ThemeSegmentedControl from "./ThemeSegmentedControl.astro"
+
+const shouldRenderSearch = true
+
+const baseTrim = import.meta.env.BASE_URL.replace(/\/$/, "")
+let pathRel = Astro.url.pathname.replace(/\/$/, "") || "/"
+if (baseTrim && (pathRel === baseTrim || pathRel.startsWith(`${baseTrim}/`))) {
+  pathRel = pathRel.slice(baseTrim.length) || "/"
+}
+const weeklyActive = pathRel === "/weekly" || pathRel.startsWith("/weekly/")
+const blogActive = pathRel === "/blog" || pathRel.startsWith("/blog/")
+
+const w = `${import.meta.env.BASE_URL}weekly/`
+const b = `${import.meta.env.BASE_URL}blog/`
+---
+
+<div class="header">
+  <div class="header-left sl-flex">
+    <div class="title-wrapper sl-flex">
+      <SiteTitle />
+    </div>
+    <nav class="site-route-nav" aria-label="栏目">
+      <a
+        href={w}
+        class:list={["site-route-link", weeklyActive && "is-active"]}
+        aria-current={weeklyActive ? "page" : undefined}
+      >
+        周刊
+      </a>
+      <a
+        href={b}
+        class:list={["site-route-link", blogActive && "is-active"]}
+        aria-current={blogActive ? "page" : undefined}
+      >
+        博客
+      </a>
+    </nav>
+  </div>
+  <div class="header-search sl-flex print:hidden">
+    {shouldRenderSearch && <Search />}
+  </div>
+  <div class="sl-hidden md:sl-flex print:hidden right-group">
+    <div class="sl-flex social-icons">
+      <SocialIcons />
+    </div>
+    <ThemeSegmentedControl />
+  </div>
+</div>
+
+<style>
+  @layer starlight.core {
+    .header {
+      position: relative;
+      display: flex;
+      gap: var(--sl-nav-gap);
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
+
+    .header-left {
+      align-items: center;
+      gap: clamp(0.5rem, 2vw, 1.1rem);
+      min-width: 0;
+      flex: 0 1 auto;
+      z-index: 2;
+    }
+
+    .title-wrapper {
+      overflow: clip;
+      padding: 0.25rem;
+      margin: -0.25rem;
+      min-width: 0;
+      flex-shrink: 0;
+    }
+
+    .site-route-nav {
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 1.25rem;
+    }
+    @media (min-width: 30rem) {
+      .site-route-nav {
+        display: flex;
+      }
+    }
+    .site-route-link {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--sl-color-white);
+      text-decoration: none;
+      white-space: nowrap;
+      opacity: 0.88;
+    }
+    .site-route-link:hover {
+      opacity: 1;
+    }
+    :global(:root[data-theme="light"]) .site-route-link {
+      color: var(--moyu-ink, #141414);
+      opacity: 0.85;
+    }
+    :global(:root[data-theme="light"]) .site-route-link:hover {
+      opacity: 1;
+    }
+    .site-route-link.is-active {
+      color: var(--sl-color-accent-high);
+      opacity: 1;
+      font-weight: 600;
+    }
+    :global(:root[data-theme="light"]) .site-route-link.is-active {
+      color: var(--moyu-ink);
+    }
+
+    .header-search {
+      flex: 1;
+      min-width: 0;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .header-search > :global(*) {
+      pointer-events: auto;
+    }
+
+    .right-group,
+    .social-icons {
+      gap: 1rem;
+      align-items: center;
+    }
+    .right-group {
+      flex-shrink: 0;
+      z-index: 2;
+    }
+    .social-icons::after {
+      content: "";
+      height: 2rem;
+      border-inline-end: 1px solid var(--sl-color-gray-5);
+    }
+
+    @media (min-width: 50rem) {
+      :global(:root[data-has-sidebar]) {
+        --__sidebar-pad: calc(2 * var(--sl-nav-pad-x));
+      }
+      :global(:root:not([data-has-toc])) {
+        --__toc-width: 0rem;
+      }
+      .header {
+        --__sidebar-width: max(0rem, var(--sl-content-inline-start, 0rem) - var(--sl-nav-pad-x));
+        --__main-column-fr: calc(
+          (
+              100% + var(--__sidebar-pad, 0rem) - var(--__toc-width, var(--sl-sidebar-width)) -
+                (2 * var(--__toc-width, var(--sl-nav-pad-x))) - var(--sl-content-inline-start, 0rem) -
+                var(--sl-content-width)
+            ) / 2
+        );
+        display: grid;
+        grid-template-columns:
+          minmax(
+            calc(var(--__sidebar-width) + max(0rem, var(--__main-column-fr) - var(--sl-nav-gap))),
+            auto
+          )
+          1fr
+          auto;
+        align-content: center;
+      }
+      .header-left {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .header-search {
+        position: absolute;
+        left: 50%;
+        top: -1px;
+        transform: translateX(-50%);
+        flex: none;
+        grid-column: 1 / -1;
+        grid-row: 1;
+        justify-self: center;
+        /* 勿用 max-content：会把触发器压成「刚好包住图标+文字」的一小条 */
+        width: min(36rem, calc(100vw - 2 * var(--sl-nav-pad-x) - 15rem));
+        min-width: min(18rem, calc(100vw - 2 * var(--sl-nav-pad-x) - 10rem));
+        max-width: min(40rem, calc(100vw - 2 * var(--sl-nav-pad-x) - 12rem));
+      }
+      .right-group {
+        grid-column: 3;
+        grid-row: 1;
+      }
+    }
+  }
+</style>

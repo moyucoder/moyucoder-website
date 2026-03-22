@@ -1,0 +1,56 @@
+---
+import { giscus } from "../../config.mjs"
+
+const ready = Boolean(giscus.repoId && giscus.categoryId && giscus.repo)
+---
+
+{
+  ready && (
+    <>
+      <div class="giscus" />
+      <script
+        src="https://giscus.app/client.js"
+        data-repo={giscus.repo}
+        data-repo-id={giscus.repoId}
+        data-category={giscus.category}
+        data-category-id={giscus.categoryId}
+        data-mapping={giscus.mapping}
+        data-strict={giscus.strict}
+        data-reactions-enabled={giscus.reactionsEnabled}
+        data-emit-metadata={giscus.emitMetadata}
+        data-input-position={giscus.inputPosition}
+        data-lang={giscus.lang}
+        data-theme="noborder_dark"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async
+      />
+      <script is:inline>
+        function __giscusTheme() {
+          return document.documentElement.getAttribute("data-theme") === "light"
+            ? "noborder_light"
+            : "noborder_dark"
+        }
+        function __pushGiscusTheme() {
+          var iframe = document.querySelector("iframe.giscus-frame")
+          if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage(
+              { giscus: { setConfig: { theme: __giscusTheme() } } },
+              "https://giscus.app"
+            )
+          }
+        }
+        new MutationObserver(__pushGiscusTheme).observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["data-theme"],
+        })
+      </script>
+    </>
+  )
+}
+
+<style>
+  .giscus {
+    width: 100%;
+  }
+</style>

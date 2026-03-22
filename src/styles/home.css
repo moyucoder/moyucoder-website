@@ -1,0 +1,208 @@
+/* 首页：双栏卡片、与 Starlight 顶栏/底栏衔接 */
+.home-main-frame {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--sl-nav-height);
+  min-width: 0;
+}
+
+.home-main-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.home-columns {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 3vw, 2rem);
+  max-width: min(90rem, 100%);
+  width: 100%;
+  margin-inline: auto;
+  padding: clamp(1rem, 2.5vw, 2rem) var(--sl-nav-pad-x);
+  align-content: start;
+  box-sizing: border-box;
+}
+
+@media (max-width: 50rem) {
+  .home-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.home-col {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-col-title {
+  margin: 0 0 1rem;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: #bbb;
+}
+
+.home-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.65rem, 1.8vw, 1rem);
+  width: 100%;
+}
+
+@media (max-width: 36rem) {
+  .home-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+  border: 1px solid var(--ide-border, var(--sl-color-hairline-shade));
+  border-radius: 6px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  background: color-mix(in oklab, var(--sl-color-bg) 96%, var(--sl-color-gray-6));
+  transition: border-color 0.15s ease;
+}
+
+html[data-theme="light"] .home-card {
+  background: var(--sl-color-bg);
+}
+
+.home-card:hover {
+  border-color: var(--sl-color-accent, #1a9fb7);
+}
+
+.home-card-image {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  background: var(--sl-color-gray-6);
+  overflow: hidden;
+}
+
+/* 博客等未传 feedCover：仅灰底占位 */
+.home-card-image--empty {
+  background: var(--sl-color-gray-5);
+}
+
+html[data-theme="light"] .home-card-image--empty {
+  background: var(--sl-color-gray-4);
+}
+
+.home-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.home-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.7rem 0.75rem 0.85rem;
+  min-height: 0;
+}
+
+.home-card-title {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  color: var(--sl-color-white, #fff);
+}
+
+html[data-theme="light"] .home-card-title {
+  color: var(--moyu-ink, #141414);
+}
+
+.home-card-date {
+  font-size: 0.75rem;
+  color: var(--sl-color-gray-3);
+  font-variant-numeric: tabular-nums;
+}
+
+html[data-theme="light"] .home-card-date {
+  color: var(--moyu-ink-muted, #333);
+}
+
+.home-card-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--sl-color-gray-2, #ccc);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  flex: 1;
+  min-height: calc(2 * 1.45 * 0.82rem);
+}
+
+html[data-theme="light"] .home-card-desc {
+  color: var(--moyu-ink-muted, #333);
+}
+
+.home-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.25rem;
+}
+
+.home-more {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--sl-color-accent-high);
+  text-decoration: none;
+}
+
+.home-more:hover {
+  text-decoration: underline;
+}
+
+html[data-theme="light"] .home-more {
+  color: var(--moyu-brand, #1a9fb7);
+}
+
+.home-site-footer {
+  margin-top: auto;
+  padding: 1.25rem var(--sl-nav-pad-x) 1.75rem;
+  border-top: 1px solid var(--ide-border, var(--sl-color-hairline-shade));
+}
+
+.home-site-footer-inner {
+  max-width: min(90rem, 100%);
+  margin-inline: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.home-footer-years {
+  margin: 0;
+  font-size: var(--sl-text-sm, 0.875rem);
+  color: var(--sl-color-gray-3);
+  font-variant-numeric: tabular-nums;
+}
+
+html[data-theme="light"] .home-footer-years {
+  color: var(--moyu-ink-muted, #333);
+}
