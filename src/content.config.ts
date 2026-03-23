@@ -7,11 +7,9 @@ export const collections = {
     loader: docsLoader(),
     schema: docsSchema({
       extend: z.object({
-        /** 周刊期号展示用（如 `2026 · 第 1 期`）；博客可不写 */
-        weeklyLabel: z.string().optional(),
         /**
-         * 首页卡片封面：可为 `src/assets/` 下相对路径（如 `weekly/weekly-01-01.jpeg`），
-         * 或 `https://...` 外链。与 `weeklyLabel` 并列各写一行即可。
+         * 首页卡片封面：`images/…` 表示与该篇 md 同级的 `images/` 目录；
+         * 或 `src/assets/` 下相对路径；或 `https://...`。
          */
         feedCover: z.string().optional(),
         /** 为 `true` 时优先排在首页「博客」栏前部；不足 20 条时其余文章按 `publishedAt` 倒序补足 */

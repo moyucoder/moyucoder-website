@@ -7,12 +7,12 @@ export default {
 
 /**
  * 首页卡片默认封面（当某篇未写 `feedCover` 时）。
- * - `weekly`：周刊默认；可为 `src/assets/` 相对路径，或 `https://...`。
+ * - `daily`：日刊默认；可为 `src/assets/` 相对路径、`images/…`（见 feedCover 说明），或 `https://...`。
  * - `blog`：`null` 表示默认灰块；单篇要图请在 frontmatter 写 `feedCover`。
  */
 export const feedDefaults = {
-  /** 周刊某篇未写 `feedCover` 时用此图（路径相对 `src/assets/`） */
-  weekly: "weekly/weekly-01-01.jpeg",
+  /** 日刊某篇未写 `feedCover` 时：空串用 SVG 占位；非空则相对 `src/assets/` */
+  daily: "",
   blog: null,
 }
 

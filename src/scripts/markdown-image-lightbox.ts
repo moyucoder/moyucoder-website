@@ -1,8 +1,8 @@
-/** 博客 / 周刊正文内图片：点击全屏预览，Esc 或点遮罩 / 关闭按钮 */
+/** 博客 / 日刊正文内图片：点击全屏预览，Esc 或点遮罩 / 关闭按钮 */
 
-function canonicalIsBlogOrWeekly(): boolean {
+function canonicalIsBlogOrDaily(): boolean {
   const href = document.querySelector('link[rel="canonical"]')?.getAttribute("href") ?? ""
-  return /\/blog\/|\/weekly\//.test(href)
+  return /\/blog\/|\/daily\//.test(href)
 }
 
 let layer: HTMLDivElement | null = null
@@ -49,7 +49,7 @@ function openLightbox(src: string, alt: string) {
 }
 
 function init() {
-  if (!canonicalIsBlogOrWeekly()) return
+  if (!canonicalIsBlogOrDaily()) return
 
   const root = document.querySelector("main .sl-markdown-content")
   if (!root) return

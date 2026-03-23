@@ -1,8 +1,96 @@
 diff --git a/node_modules/@astrojs/starlight/utils/navigation.ts b/node_modules/@astrojs/starlight/utils/navigation.ts
-index 2870d61..b135a3c 100644
+index 2870d61..456c2e3 100644
 --- a/node_modules/@astrojs/starlight/utils/navigation.ts
 +++ b/node_modules/@astrojs/starlight/utils/navigation.ts
-@@ -300,6 +300,17 @@ function sortDirEntries(dir: [string, Dir | Route][]): [string, Dir | Route][] {
+@@ -267,11 +267,55 @@ function treeify(routes: Route[], locale: string | undefined, baseDir: string):
+ 	return treeRoot;
+ }
+ 
++/** moyu: 日刊侧栏链接文案 — `publishedAt` →「M月d日：」+ title；显式 `sidebar.label` 优先 */
++function moyuDailySidebarLinkLabel(route: Route): string {
++	type FM = {
++		title?: string;
++		publishedAt?: Date | string;
++		sidebar?: { label?: string };
++	};
++	const data = route.entry.data as FM;
++	const explicit = data.sidebar?.label;
++	if (typeof explicit === 'string' && explicit.trim() !== '') return explicit.trim();
++
++	const slug = route.slug;
++	if (!/^daily\/\d{4}\//.test(slug) || slug.endsWith('/index')) {
++		return (data.title ?? '') as string;
++	}
++
++	const p = data.publishedAt;
++	let iso = '';
++	if (p instanceof Date && !Number.isNaN(p.getTime())) {
++		iso = p.toISOString().slice(0, 10);
++	} else if (typeof p === 'string' && p.trim()) {
++		const t = new Date(p.trim()).getTime();
++		if (!Number.isNaN(t)) iso = new Date(t).toISOString().slice(0, 10);
++	}
++	const title = ((data.title ?? '') as string).trim();
++	if (!iso) return title;
++	const parts = iso.split('-');
++	const month = parseInt(parts[1]!, 10);
++	const day = parseInt(parts[2]!, 10);
++	const md = `${month}月${day}日`;
++	return title ? `${md}：${title}` : md;
++}
++
++/** moyu: 日刊 `daily/YYYY/` 侧栏按发布时间排序 */
++function routePublishedAtMs(route: Route): number | null {
++	const p = route.entry.data.publishedAt;
++	if (p instanceof Date && !Number.isNaN(p.getTime())) return p.getTime();
++	if (typeof p === 'string' && p.trim()) {
++		const t = new Date(p.trim()).getTime();
++		if (!Number.isNaN(t)) return t;
++	}
++	return null;
++}
++
+ /** Create a link entry for a given content collection entry. */
+ function linkFromRoute(route: Route): SidebarLink {
+ 	return makeSidebarLink(
+ 		slugToPathname(route.slug),
+-		route.entry.data.sidebar.label || route.entry.data.title,
++		moyuDailySidebarLinkLabel(route),
+ 		route.entry.data.sidebar.badge,
+ 		route.entry.data.sidebar.attrs
+ 	);
+@@ -288,18 +332,44 @@ function getOrder(routeOrDir: Route | Dir): number {
+ 			(routeOrDir.entry.data.sidebar.order ?? Number.MAX_VALUE);
+ }
+ 
+-/** Sort a directory’s entries by user-specified order or alphabetically if no order specified. */
+-function sortDirEntries(dir: [string, Dir | Route][]): [string, Dir | Route][] {
++/**
++ * Sort a directory’s entries by user-specified order or alphabetically if no order specified.
++ * moyu: `daily/YYYY` 下仅含文章页时，按 `publishedAt` 倒序，缺省或相同时按文件名（slug 末段）倒序。
++ */
++function sortDirEntries(
++	dir: [string, Dir | Route][],
++	parentDirSlug: string
++): [string, Dir | Route][] {
+ 	const collator = new Intl.Collator(localeToLang(undefined));
++	const isDailyYearDir = /^daily\/\d{4}$/.test(parentDirSlug);
++
+ 	return dir.sort(([_keyA, a], [_keyB, b]) => {
++		if (isDailyYearDir && !isDir(a) && !isDir(b)) {
++			const msA = routePublishedAtMs(a);
++			const msB = routePublishedAtMs(b);
++			if (msA !== null && msB !== null && msA !== msB) return msB - msA;
++			if (msA !== null && msB === null) return -1;
++			if (msA === null && msB !== null) return 1;
++			return _keyB.localeCompare(_keyA, undefined, { numeric: true });
++		}
++
+ 		const [aOrder, bOrder] = [getOrder(a), getOrder(b)];
+-		// Pages are sorted by order in ascending order.
+ 		if (aOrder !== bOrder) return aOrder < bOrder ? -1 : 1;
+-		// If two pages have the same order value they will be sorted by their slug.
+ 		return collator.compare(isDir(a) ? a[SlugKey] : a.slug, isDir(b) ? b[SlugKey] : b.slug);
  	});
  }
  
@@ -20,7 +108,13 @@ index 2870d61..b135a3c 100644
  /** Create a group entry for a given content collection directory. */
  function groupFromDir(
  	dir: Dir,
-@@ -314,7 +325,7 @@ function groupFromDir(
+@@ -309,12 +379,12 @@ function groupFromDir(
+ 	locale: string | undefined,
+ 	collapsed: boolean
+ ): SidebarGroup {
+-	const entries = sortDirEntries(Object.entries(dir)).map(([key, dirOrRoute]) =>
++	const entries = sortDirEntries(Object.entries(dir), fullPath).map(([key, dirOrRoute]) =>
+ 		dirToItem(dirOrRoute, `${fullPath}/${key}`, key, currentPathname, locale, collapsed)
  	);
  	return {
  		type: 'group',
@@ -29,17 +123,26 @@ index 2870d61..b135a3c 100644
  		entries,
  		collapsed,
  		badge: undefined,
-@@ -356,14 +367,57 @@ function sidebarFromDir(
+@@ -342,7 +412,7 @@ function sidebarFromDir(
+ 	locale: string | undefined,
+ 	collapsed: boolean
+ ) {
+-	return sortDirEntries(Object.entries(tree)).map(([key, dirOrRoute]) =>
++	return sortDirEntries(Object.entries(tree), tree[SlugKey]).map(([key, dirOrRoute]) =>
+ 		dirToItem(dirOrRoute, key, key, currentPathname, locale, collapsed)
+ 	);
+ }
+@@ -356,14 +426,57 @@ function sidebarFromDir(
   *
   * @see getSidebarFromIntermediateSidebar
   */
 -const intermediateSidebars = new Map<string | undefined, SidebarEntry[]>();
 +const intermediateSidebars = new Map<string, SidebarEntry[]>();
 +
-+/** moyu: 单语言站点用路径区分周刊侧栏；避免 locale 均为 undefined 时缓存串台。兼容 Astro `base`（如 GitHub Pages 项目站 /repo/weekly/） */
++/** moyu: 单语言站点用路径区分日刊侧栏；避免 locale 均为 undefined 时缓存串台。兼容 Astro `base`（如 GitHub Pages 项目站 /repo/daily/） */
 +function sidebarGroupKey(pathname: string): string {
 +	const p = pathname.replace(/\/$/, '') || '/';
-+	if (p.endsWith('/weekly') || p.includes('/weekly/')) return '__weekly';
++	if (p.endsWith('/daily') || p.includes('/daily/')) return '__daily';
 +	return '__default';
 +}
 +
@@ -49,12 +152,12 @@ index 2870d61..b135a3c 100644
 +	};
 +	const by = raw.sidebarByLocale;
 +	const p = pathname.replace(/\/$/, '') || '/';
-+	if (by?.weekly && (p.endsWith('/weekly') || p.includes('/weekly/'))) return by.weekly;
++	if (by?.daily && (p.endsWith('/daily') || p.includes('/daily/'))) return by.daily;
 +	return config.sidebar;
 +}
 +
-+/** moyu: 周刊侧栏仅配置「单组 + autogenerate」时去掉外层分组壳，直接展示 weekly 目录内层级 */
-+function unwrapWeeklySidebarShell(entries: SidebarEntry[]): SidebarEntry[] {
++/** moyu: 日刊侧栏仅配置「单组 + autogenerate」时去掉外层分组壳，直接展示 daily 目录内层级 */
++function unwrapDailySidebarShell(entries: SidebarEntry[]): SidebarEntry[] {
 +	if (entries.length !== 1) return entries;
 +	const only = entries[0];
 +	if (only.type !== 'group') return entries;
@@ -87,8 +190,8 @@ index 2870d61..b135a3c 100644
 +			intermediateSidebars.set(key, intermediateSidebar);
 +		}
 +	}
-+	if (key === '__weekly') {
-+		intermediateSidebar = unwrapWeeklySidebarShell(intermediateSidebar);
++	if (key === '__daily') {
++		intermediateSidebar = unwrapDailySidebarShell(intermediateSidebar);
  	}
  	return getSidebarFromIntermediateSidebar(intermediateSidebar, pathname);
  }

@@ -10,7 +10,7 @@ import { giscus } from "../../config.mjs"
 const { id } = Astro.locals.starlightRoute
 const giscusReady = Boolean(giscus.repoId && giscus.categoryId && giscus.repo)
 const showGiscus =
-  giscusReady && (id.startsWith("blog/") || id.startsWith("weekly/"))
+  giscusReady && (id.startsWith("blog/") || id.startsWith("daily/"))
 ---
 
 <footer class="sl-flex">

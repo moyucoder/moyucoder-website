@@ -42,6 +42,7 @@ export default defineConfig({
         Header: "./src/components/StarlightHeader.astro",
         SiteTitle: "./src/components/StarlightSiteTitle.astro",
         Footer: "./src/components/Footer.astro",
+        PageTitle: "./src/components/StarlightPageTitle.astro",
       },
       locales: {
         root: {
@@ -61,7 +62,7 @@ export default defineConfig({
       markdown: {
         headingLinks: false,
       },
-      /** 右侧「本页目录」默认只到 h3；周刊/博客常用 #### 作条目标题，需纳入锚点 */
+      /** 右侧「本页目录」默认只到 h3；日刊/博客常用 #### 作条目标题，需纳入锚点 */
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
       customCss: ["./src/styles/starlight-brand.css", "./src/styles/ide-chrome.css"],
       logo: {
@@ -86,11 +87,12 @@ export default defineConfig({
         },
       ],
       sidebarByLocale: {
-        weekly: [
+        daily: [
+          { slug: "daily", label: "日刊" },
           {
-            label: "周刊",
+            label: "2026",
             collapsed: false,
-            autogenerate: { directory: "weekly" },
+            autogenerate: { directory: "daily/2026" },
           },
         ],
       },

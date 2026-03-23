@@ -11,10 +11,10 @@ let pathRel = Astro.url.pathname.replace(/\/$/, "") || "/"
 if (baseTrim && (pathRel === baseTrim || pathRel.startsWith(`${baseTrim}/`))) {
   pathRel = pathRel.slice(baseTrim.length) || "/"
 }
-const weeklyActive = pathRel === "/weekly" || pathRel.startsWith("/weekly/")
+const dailyActive = pathRel === "/daily" || pathRel.startsWith("/daily/")
 const blogActive = pathRel === "/blog" || pathRel.startsWith("/blog/")
 
-const w = `${import.meta.env.BASE_URL}weekly/`
+const d = `${import.meta.env.BASE_URL}daily/`
 const b = `${import.meta.env.BASE_URL}blog/`
 ---
 
@@ -25,11 +25,11 @@ const b = `${import.meta.env.BASE_URL}blog/`
     </div>
     <nav class="site-route-nav" aria-label="栏目">
       <a
-        href={w}
-        class:list={["site-route-link", weeklyActive && "is-active"]}
-        aria-current={weeklyActive ? "page" : undefined}
+        href={d}
+        class:list={["site-route-link", dailyActive && "is-active"]}
+        aria-current={dailyActive ? "page" : undefined}
       >
-        周刊
+        日刊
       </a>
       <a
         href={b}

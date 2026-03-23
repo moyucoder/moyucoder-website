@@ -9,7 +9,7 @@ import {
   isoDate,
   mtimeMs,
   publishedOrMtimeMs,
-  weeklyIssueNum,
+  dailyCardMenuTitle,
 } from "../lib/homeLists.ts"
 
 const BLOG_HOME_FEED_MAX = 20
@@ -25,28 +25,42 @@ type CardItem = {
   feed: FeedVisual
 }
 
+type CardItemOptions = {
+  /** 覆盖卡片标题（如日刊为 `publishedAt` + `title`） */
+  title?: (e: CollectionEntry<"docs">) => string
+  /** 为 true 时不展示卡片上的日期行（标题已含日期时避免重复） */
+  hideDate?: boolean
+}
+
 function toCardItems(
   entries: CollectionEntry<"docs">[],
   column: FeedColumn,
   timeMs: (e: CollectionEntry<"docs">) => number = (e) => mtimeMs(e.id),
   max = 12,
+  opts?: CardItemOptions,
 ): CardItem[] {
   return entries.slice(0, max).map((e) => {
     const t = timeMs(e)
+    const hideDate = opts?.hideDate === true
     return {
       href: hrefForDocId(e.id),
-      title: e.data.title,
-      dateLabel: formatDate(t),
-      dateIso: isoDate(t),
+      title: opts?.title ? opts.title(e) : ((e.data.title ?? "") as string),
+      dateLabel: hideDate ? "" : formatDate(t),
+      dateIso: hideDate ? "" : isoDate(t),
       description: (e.data.description ?? "") as string,
-      feed: resolveFeedVisual(e.data.feedCover, column),
+      feed: resolveFeedVisual(e.data.feedCover, column, e.id),
     }
   })
 }
 
-const weeklyRaw = allDocs.filter((e) => e.id.startsWith("weekly/") && /^weekly\/weekly-\d+$/u.test(e.id))
-weeklyRaw.sort((a, b) => weeklyIssueNum(b.id) - weeklyIssueNum(a.id))
-const weeklyList = toCardItems(weeklyRaw, "weekly", publishedOrMtimeMs)
+const dailyRaw = allDocs.filter(
+  (e) => /^daily\/\d{4}\//u.test(e.id) && e.id !== "daily/index" && !e.id.endsWith("/index"),
+)
+dailyRaw.sort((a, b) => publishedOrMtimeMs(b) - publishedOrMtimeMs(a))
+const dailyList = toCardItems(dailyRaw, "daily", publishedOrMtimeMs, 12, {
+  title: (e) => dailyCardMenuTitle(e.id, e.data),
+  hideDate: true,
+})
 
 const blogCandidates = allDocs.filter((e) => e.id.startsWith("blog/") && e.id !== "blog/index")
 const byPublishedDesc = (a: CollectionEntry<"docs">, b: CollectionEntry<"docs">) =>
@@ -59,12 +73,12 @@ const blogList = toCardItems(blogRaw, "blog", publishedOrMtimeMs, BLOG_HOME_FEED
 
 const base = import.meta.env.BASE_URL
 const feedColumns = [
-  { key: "weekly", title: "周刊", moreHref: `${base}weekly/`, items: weeklyList },
+  { key: "daily", title: "日刊", moreHref: `${base}daily/`, items: dailyList },
   { key: "blog", title: "博客", moreHref: `${base}blog/`, items: blogList },
 ] as const
 ---
 
-<HomeLayout title="摸鱼编程" description="摸鱼编程 — 周刊与博客">
+<HomeLayout title="摸鱼编程" description="摸鱼编程 — 日刊与博客">
   <main id="_top" class="home-main-inner">
     <div class="home-columns">
       {

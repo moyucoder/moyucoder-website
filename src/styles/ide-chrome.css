@@ -96,11 +96,11 @@ html {
 /* 云原生等页：关注博主链接，桌面每行 3 个 */
 .sl-markdown-content .blogger-follow-grid {
   list-style: none;
-  margin: 0.5rem 0 0;
-  padding: 0;
+  margin: 1rem 0 0;
+  padding: 0.5rem;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.45rem 1rem;
+  gap: 1rem 1rem;
 }
 
 .sl-markdown-content .blogger-follow-grid a {
@@ -122,7 +122,7 @@ html {
   }
 }
 
-/* 正文插图：最大宽度为版心 60%，居中（博客/周刊 Markdown、MDX） */
+/* 正文插图：最大宽度为版心 60%，居中（博客/日刊 Markdown、MDX） */
 .sl-markdown-content picture {
   display: block;
   max-width: 80%;
@@ -140,7 +140,7 @@ html {
   width: 100%;
 }
 
-/* 博客 / 周刊：正文图可点击放大 */
+/* 博客 / 日刊：正文图可点击放大 */
 .sl-markdown-content img.md-content-img--zoomable {
   cursor: zoom-in;
 }
@@ -289,8 +289,8 @@ html[data-theme="light"] .sl-markdown-content :where(strong) {
   color: var(--moyu-ink);
 }
 
-/* 周刊 / 博客：标题被 rehype-autolink-headings 包成 <a> 时与正文标题一致，无链接色/下划线 */
-html:has(link[rel="canonical"][href*="/weekly/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a,
+/* 日刊 / 博客：标题被 rehype-autolink-headings 包成 <a> 时与正文标题一致，无链接色/下划线 */
+html:has(link[rel="canonical"][href*="/daily/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a,
 html:has(link[rel="canonical"][href*="/blog/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a {
   color: inherit;
   text-decoration: none;
@@ -298,9 +298,9 @@ html:has(link[rel="canonical"][href*="/blog/"]) .sl-markdown-content :is(h1, h2,
   background: none;
   box-shadow: none;
 }
-html:has(link[rel="canonical"][href*="/weekly/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a:hover,
-html:has(link[rel="canonical"][href*="/weekly/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a:focus,
-html:has(link[rel="canonical"][href*="/weekly/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a:focus-visible,
+html:has(link[rel="canonical"][href*="/daily/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a:hover,
+html:has(link[rel="canonical"][href*="/daily/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a:focus,
+html:has(link[rel="canonical"][href*="/daily/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a:focus-visible,
 html:has(link[rel="canonical"][href*="/blog/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a:hover,
 html:has(link[rel="canonical"][href*="/blog/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a:focus,
 html:has(link[rel="canonical"][href*="/blog/"]) .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) a:focus-visible {
@@ -331,17 +331,25 @@ html[data-theme="light"] .right-sidebar-panel a {
   color: var(--moyu-ink-muted);
 }
 
+/* 日刊 / 博客：本页目录（桌面右栏 + 移动折叠）TOC 锚点链接字号 */
+html:has(link[rel="canonical"][href*="/daily/"]) .right-sidebar-panel a,
+html:has(link[rel="canonical"][href*="/blog/"]) .right-sidebar-panel a,
+html:has(link[rel="canonical"][href*="/daily/"]) mobile-starlight-toc a,
+html:has(link[rel="canonical"][href*="/blog/"]) mobile-starlight-toc a {
+  font-size: 14px;
+}
+
 /* 浅色顶栏：站点标题 */
 html[data-theme="light"] .page > header .site-title {
   color: var(--moyu-ink);
 }
 
-/* 周刊 / 博客：左侧栏加宽（默认 Starlight 18.75rem） */
+/* 日刊 / 博客：左侧栏加宽（默认 Starlight 18.75rem） */
 html[data-has-sidebar]:is(
     :has(link[rel="canonical"][href*="/blog/"]),
-    :has(link[rel="canonical"][href*="/weekly/"])
+    :has(link[rel="canonical"][href*="/daily/"])
   ) {
-  --sl-sidebar-width: 22.5rem;
+  --sl-sidebar-width: 26.5rem;
 }
 
 /* 全站直角、代码块/旁注等与页面同底（无圆角卡片感） */
@@ -375,7 +383,7 @@ figure.expressive-code {
 @media (min-width: 72rem) {
   html[data-has-sidebar]:is(
       :has(link[rel="canonical"][href*="/blog/"]),
-      :has(link[rel="canonical"][href*="/weekly/"])
+      :has(link[rel="canonical"][href*="/daily/"])
     )
     .content-panel
     .sl-container {
@@ -385,15 +393,15 @@ figure.expressive-code {
 
   html[data-has-sidebar][data-has-toc]:is(
       :has(link[rel="canonical"][href*="/blog/"]),
-      :has(link[rel="canonical"][href*="/weekly/"])
+      :has(link[rel="canonical"][href*="/daily/"])
     ) {
-    /* 目录列加宽，与左侧加宽侧栏同量级 */
-    --sl-toc-column-width: clamp(14.5rem, 18vw, 21rem);
+    /* 右侧「本页目录」列加宽（锚点 TOC） */
+    --sl-toc-column-width: clamp(17.5rem, 21vw, 26rem);
   }
 
   html[data-has-sidebar][data-has-toc]:is(
       :has(link[rel="canonical"][href*="/blog/"]),
-      :has(link[rel="canonical"][href*="/weekly/"])
+      :has(link[rel="canonical"][href*="/daily/"])
     )
     .main-pane {
     flex: 1 1 auto;
@@ -403,7 +411,7 @@ figure.expressive-code {
 
   html[data-has-sidebar][data-has-toc]:is(
       :has(link[rel="canonical"][href*="/blog/"]),
-      :has(link[rel="canonical"][href*="/weekly/"])
+      :has(link[rel="canonical"][href*="/daily/"])
     )
     .right-sidebar-container {
     flex: 0 0 var(--sl-toc-column-width);
@@ -413,7 +421,7 @@ figure.expressive-code {
   /* fixed 子层默认 width:100% 相对视口，需与列宽对齐并贴右缘 */
   html[data-has-sidebar][data-has-toc]:is(
       :has(link[rel="canonical"][href*="/blog/"]),
-      :has(link[rel="canonical"][href*="/weekly/"])
+      :has(link[rel="canonical"][href*="/daily/"])
     )
     .right-sidebar {
     width: var(--sl-toc-column-width) !important;
@@ -422,7 +430,7 @@ figure.expressive-code {
 
   html[data-has-sidebar][data-has-toc]:is(
       :has(link[rel="canonical"][href*="/blog/"]),
-      :has(link[rel="canonical"][href*="/weekly/"])
+      :has(link[rel="canonical"][href*="/daily/"])
     )
     .right-sidebar-panel
     .sl-container {
