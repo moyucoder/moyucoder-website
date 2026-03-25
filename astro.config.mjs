@@ -113,6 +113,16 @@ export default defineConfig({
             collapsed: false,
             autogenerate: { directory: "daily/2026" },
           },
+          {
+            label: "2020",
+            collapsed: true,
+            autogenerate: { directory: "daily/2020" },
+          },
+          {
+            label: "2016",
+            collapsed: true,
+            autogenerate: { directory: "daily/2016" },
+          },
         ],
       },
     }),
