@@ -2,6 +2,7 @@
 import { defineConfig } from "astro/config"
 import starlight from "@astrojs/starlight"
 import config from "./config.mjs"
+import { baiduTongjiHeadEntry } from "./src/constants/baidu-tongji.mjs"
 import { rehypeHeadingIds } from "@astrojs/markdown-remark"
 import rehypeAutolinkHeadings from "rehype-autolink-headings"
 
@@ -64,6 +65,7 @@ export default defineConfig({
         },
       },
       favicon: "/logo.png",
+      head: [baiduTongjiHeadEntry],
       pagefind: false,
       lastUpdated: true,
       expressiveCode: { themes: ["github-light", "github-dark"] },
