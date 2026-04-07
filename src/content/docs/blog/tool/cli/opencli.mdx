@@ -1,0 +1,43 @@
+---
+title: OpenCLI
+createAt: 2026-04-08
+screen: images/opencli-hunckernews.jpg
+---
+
+## 1. 安装插件
+
+1. 进入 [OpenCLI Github](https://github.com/jackwener/opencli)。
+
+1. 找到 [Relase Pages](https://github.com/jackwener/opencli/releases) 点击进入
+
+![Relase Pages](./images/opencli-releases-pages.jpg)
+
+1. 下载最新的 `opencli-extension.zip`。
+
+1. Chrome 浏览器，输入 `chrome://extensions/`，右上角的【开发者模式】开启，将刚才下载的 `opencli-extension.zip` 拖拽到扩展程序页面中。
+
+![opencli-extension](./images/opencli-extension.jpg)
+
+## 2. 安装 CLI
+
+```bash
+npm install -g @jackwener/opencli
+```
+
+## 3. 验证
+
+查询 hackernews 上前 5 个热门话题：
+
+```bash
+opencli hackernews top --limit 5
+```
+
+![hackernews](./images/opencli-hunckernews.jpg)
+
+查询天气：
+
+```bash
+opencli grok ask 今天杭州天气怎么样
+```
+
+![grok](./images/opencli-grok.jpg)
