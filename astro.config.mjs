@@ -95,6 +95,11 @@ export default defineConfig({
           autogenerate: { directory: "blog/agent" },
         },
         {
+          label: "开源介绍",
+          collapsed: true,
+          autogenerate: { directory: "blog/opensource" },
+        },
+        {
           label: "前端",
           collapsed: false,
           autogenerate: { directory: "blog/frontend" },
