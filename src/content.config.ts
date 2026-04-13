@@ -32,7 +32,7 @@ export const collections = {
              */
             /** 空键 `screen:` 在 YAML 里为 `null`，需与 optional 同时允许 null */
             screen: z.string().nullish(),
-            /** 预留字段；首页「博客」栏已与日刊一致按 `createAt` 倒序，不再用此项置顶 */
+            /** 为 true 时进入首页「博客」卡片栏；默认不参与首页展示 */
             homeFeed: z.boolean().optional(),
             /** 创建时间；未设置时在侧栏与首页排序中置于最后 */
             createAt: z.coerce.date().optional(),

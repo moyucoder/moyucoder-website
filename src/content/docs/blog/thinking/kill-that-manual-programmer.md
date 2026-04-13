@@ -1,8 +1,8 @@
 ---
 title: 杀死那个手工程序员
 screen: images/kill-that-manual-programmer.png
-createAt: 2026-04-03
-feedFeed: true
+createAt: 2026-04-12
+homeFeed: true
 ---
 
 > 原文地址：[https://weekly.tw93.fun/posts/262](https://weekly.tw93.fun/posts/262)
