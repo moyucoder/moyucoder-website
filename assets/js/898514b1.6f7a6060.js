@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmy_website=self.webpackChunkmy_website||[]).push([["528"],{9187(a){a.exports=JSON.parse('{"tags":[{"label":"obsidian","permalink":"/docs/tags/obsidian","count":1},{"label":"claudian","permalink":"/docs/tags/claudian","count":1}]}')}}]);
