@@ -1,4 +1,4 @@
-# 推送到 main 后构建，将 dist 推送到 gh-pages 分支。
+# 推送到 main 后构建，将 build 推送到 gh-pages 分支。
 # 站点绑定自定义域名 moyucode.cn（根目录 public/CNAME + 构建使用 https://moyucode.cn，无子路径 base）。
 
 name: Deploy to GitHub Pages
@@ -34,10 +34,10 @@ jobs:
           BASE_PATH: ""
         run: npm run build
 
-      - name: Push dist to gh-pages branch
+      - name: Push build to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./build
           force_orphan: true
           cname: moyucode.cn

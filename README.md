@@ -1,41 +1,25 @@
-# Website
+# AI时代博客重启宣言
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+算起来，我写博客已经有很多年了。
 
-## Installation
+中间因为工作忙碌或生活琐碎，断断续续地停下过，又在某些灵感迸发的时刻重新启动过。
 
-```bash
-yarn
-```
+每一次停滞都伴随着一丝遗憾，而每一次重启，都源于内心深处对文字和记录的不灭热爱。
 
-## Local Development
+今年，在AI技术肆虐、短视频横行的洪流中，我决定不再让它流浪，真正好好开始。
 
-```bash
-yarn start
-```
+有人问：在这个算法投喂、15秒快餐信息当道的时代，为什么还要写博客？
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+因为写博客，是我在信息爆炸中保持清醒的“深度思维体操”。
 
-## Build
+AI可以一秒生成万字通顺的废话，短视频可以疯狂收割多巴胺，但它们都无法替代我个人的真实经历、踩过的具体大坑，以及做出MVP（最小可行性产品）时的兴奋感。
 
-```bash
-yarn build
-```
+今年，我的博客将成为我实践**“演示MVP -> 发现问题 -> 按需学习”**这一高效学习法的复盘阵地。
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+我不打算去追求虚无的流量，也不再逼迫自己完成高强度的更新，而是去建立一种“可持续的记录习惯”。
 
-## Deployment
+只要内容有价值，它就会沉淀为具备长尾效应的个人无形资产。
 
-Using SSH:
+在这个注意力被极度蚕食的时代，能有一块属于自己的自留地，安静地梳理思绪，是一件极其奢侈且幸福的事。
 
-```bash
-USE_SSH=true yarn deploy
-```
-
-Not using SSH:
-
-```bash
-GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+别人在算法里娱乐，我选择在文字里沉淀。
