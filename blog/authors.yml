@@ -1,0 +1,15 @@
+yunliu:
+  name: 云流
+  title: 沉稳务实、善于协调
+  # url: 
+  image_url: /img/authors/yunliu.png
+  page: true
+  # socials:
+    # x: 333
+    # github: 
+
+qingfeng:
+  name: 清风
+  title: 踏实肯干、学习能力强
+  image_url: /img/authors/qingfeng.png
+  page: true

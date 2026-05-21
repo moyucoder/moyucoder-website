@@ -1,28 +1,45 @@
 {
-  "name": "moyucoder-website",
-  "type": "module",
-  "version": "0.1.0",
+  "name": "my-website",
+  "version": "0.0.0",
   "private": true,
-  "engines": {
-    "node": ">=22.0.0"
-  },
   "scripts": {
-    "postinstall": "patch-package",
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build && node scripts/pagefind-all.mjs",
-    "preview": "astro preview",
-    "astro": "astro"
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "6.3.1",
-    "@astrojs/starlight": "0.34.3",
-    "astro": "5.7.13",
-    "rehype-autolink-headings": "7.1.0"
+    "@docusaurus/core": "3.10.1",
+    "@docusaurus/faster": "3.10.1",
+    "@docusaurus/preset-classic": "3.10.1",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.0.0",
+    "prism-react-renderer": "^2.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@types/node": "22.13.9",
-    "patch-package": "^8.0.1",
-    "typescript": "5.8.2"
+    "@docusaurus/module-type-aliases": "3.10.1",
+    "@docusaurus/types": "3.10.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0"
   }
 }
